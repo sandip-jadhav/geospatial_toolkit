@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "GeoSpatial Helper",
+  "version": "1.0.0",
+  "description": "Inspect GeoJSON, KML, Shapefile and GeoParquet files — searchable table, Leaflet map, bounding-box zoom.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GeoSpatial Helper"
+  }
+}
