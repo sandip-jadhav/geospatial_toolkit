@@ -33,6 +33,21 @@
   <!-- Status banner -->
   <div id="status" class="hidden mt-3 text-sm px-3 py-2 rounded-lg border"></div>
 
+  <!-- Basemap selector -->
+  <div id="basemap-bar" class="flex items-center gap-2 mt-3">
+    <label class="text-xs text-gray-500 font-medium shrink-0">Basemap:</label>
+    <select id="basemap-select" class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <option value="osm">OpenStreetMap</option>
+      <option value="tomtom">TomTom</option>
+    </select>
+    <input
+      id="tomtom-key-input"
+      type="text"
+      placeholder="TomTom API key…"
+      class="hidden flex-1 text-xs px-2 py-1 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+  </div>
+
   <!-- Leaflet map — always rendered so the tile layer loads immediately -->
   <div id="map" style="height:260px" class="mt-3 rounded-lg overflow-hidden border border-gray-200 shadow-sm"></div>
 

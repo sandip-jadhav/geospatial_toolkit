@@ -16,14 +16,62 @@ const searchInput     = document.getElementById('search-input')
 const tableContainer  = document.getElementById('table-container')
 const statusEl        = document.getElementById('status')
 const searchContainer = document.getElementById('search-container')
+const basemapSelect   = document.getElementById('basemap-select')
+const tomtomKeyInput  = document.getElementById('tomtom-key-input')
 
 // ── Leaflet map ───────────────────────────────────────────────────────────────
 const map = L.map('map', { zoomControl: true }).setView([20, 0], 2)
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  maxZoom: 19,
-}).addTo(map)
+const TILE_CONFIGS = {
+  osm: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+      referrerPolicy: 'no-referrer',
+    },
+  },
+  tomtom: (apiKey) => ({
+    url: `https://api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=${apiKey}`,
+    options: {
+      attribution: '&copy; <a href="https://www.tomtom.com">TomTom</a>',
+      maxZoom: 22,
+      referrerPolicy: 'no-referrer',
+    },
+  }),
+}
+
+let baseTileLayer = null
+
+function setBasemap(type) {
+  if (baseTileLayer) { map.removeLayer(baseTileLayer); baseTileLayer = null }
+
+  if (type === 'tomtom') {
+    const key = tomtomKeyInput.value.trim()
+    if (!key) return
+    const { url, options } = TILE_CONFIGS.tomtom(key)
+    baseTileLayer = L.tileLayer(url, options).addTo(map)
+  } else {
+    const { url, options } = TILE_CONFIGS.osm
+    baseTileLayer = L.tileLayer(url, options).addTo(map)
+  }
+}
+
+// Restore saved TomTom key and initialise OSM basemap
+const savedKey = localStorage.getItem('tomtom_api_key')
+if (savedKey) tomtomKeyInput.value = savedKey
+setBasemap('osm')
+
+basemapSelect.addEventListener('change', () => {
+  const isTomTom = basemapSelect.value === 'tomtom'
+  tomtomKeyInput.classList.toggle('hidden', !isTomTom)
+  setBasemap(basemapSelect.value)
+})
+
+tomtomKeyInput.addEventListener('change', () => {
+  localStorage.setItem('tomtom_api_key', tomtomKeyInput.value.trim())
+  setBasemap('tomtom')
+})
 
 let geoLayer = null
 
